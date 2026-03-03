@@ -8,5 +8,5 @@ app.use(express.static("public"));
 app.use("/posts", postsRouter);
 
 app.listen(port, () => {
-  console.log(`Server avviato sulla porta ${port}`);
+    console.log(`Server avviato sulla porta ${port}`);
 });
