@@ -25,7 +25,14 @@ function update(req, res) {
 }
 
 function destroy(req, res) {
-    res.send("Cancellazione del post " + req.params.id);
+    const index = postsData.findIndex(
+        (post) => post.id === parseInt(req.params.id),
+    );
+    postsData.splice(index, 1);
+
+    console.log("Lista aggiornata dopo l'eliminazione:", postsData);
+
+    res.sendStatus(204);
 }
 
 module.exports = {
