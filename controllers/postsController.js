@@ -17,7 +17,20 @@ function show(req, res) {
 }
 
 function create(req, res) {
-    res.send("Creazione di un nuovo post");
+    const newId = postsData[postsData.length - 1].id + 1;
+    // Costruisco il nuovo oggetto post
+    const newPost = {
+        id: newId,
+        title: req.body.title,
+        content: req.body.content,
+        image: req.body.image,
+        tags: req.body.tags,
+    };
+
+    postsData.push(newPost);
+    // Costruisco il nuovo oggetto della risposta!?
+
+    res.status(201).json(newPost);
 }
 
 function update(req, res) {
