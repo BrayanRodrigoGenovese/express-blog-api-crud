@@ -34,7 +34,18 @@ function create(req, res) {
 }
 
 function update(req, res) {
-    res.send("Modifica del post " + req.params.id);
+    const postToUpdate = postsData.find(
+        (post) => id === parseInt(req.params.id),
+    );
+
+    // Aggiorno i dati
+    postToUpdate.title = req.body.title;
+    postToUpdate.content = req.body.content;
+    postToUpdate.image = req.body.image;
+    postToUpdate.tags = req.body.tags;
+
+    // Costruisco il nuovo oggetto della risposta!?
+    res.json(postToUpdate);
 }
 
 function destroy(req, res) {
