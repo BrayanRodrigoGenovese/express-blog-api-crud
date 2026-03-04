@@ -5,8 +5,8 @@ const port = 3000;
 const postsRouter = require("./routers/posts");
 
 app.use(express.static("public"));
+app.use(express.json());
 app.use("/posts", postsRouter);
-
 app.listen(port, () => {
     console.log(`Server avviato sulla porta ${port}`);
 });
