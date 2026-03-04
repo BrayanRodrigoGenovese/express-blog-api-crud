@@ -1,7 +1,18 @@
 const postsData = require("../data/posts.js");
 
 function index(req, res) {
-    res.json(postsData);
+    let posts = [...postsData];
+    const tagFilter = req.query.tag;
+    if (tagFilter) {
+        const normalizedFilter = tagFilter.toLowerCase().trim();
+        posts = posts.filter((post) => {
+            return post.tags.some(
+                (tag) => tag.toLowerCase().trim() === normalizedFilter,
+            );
+        });
+    }
+
+    res.json(posts);
 }
 
 function show(req, res) {
