@@ -20,22 +20,29 @@ function show(req, res) {
         (post) => post.id === parseInt(req.params.id),
     );
 
-    if (postFound) {
-        res.json(postFound);
-    } else {
-        res.status(404).send("Errore: Post non trovato!");
+    if (!postFound) {
+        return res.status(404)({
+            succes: false,
+            message: `Post con id ${postID} non trovato`,
+        });
     }
+
+    res.json(postFound);
 }
 
 function create(req, res) {
-    const newId = postsData[postsData.length - 1].id + 1;
+    let maxId = 0;
+    postsData.forEach((post) => {
+        if (post.id > maxId) maxId = post.id;
+    });
+    const newId = maxId + 1;
     // Costruisco il nuovo oggetto post
     const newPost = {
         id: newId,
         title: req.body.title,
         content: req.body.content,
         image: req.body.image,
-        tags: req.body.tags,
+        tags: req.body.tags || [],
     };
 
     postsData.push(newPost);
@@ -48,6 +55,13 @@ function update(req, res) {
     const postToUpdate = postsData.find(
         (post) => id === parseInt(req.params.id),
     );
+
+    if (!postToUpdate) {
+        return res.status(404).json({
+            success: false,
+            message: `Impossibile modificare: Post con id ${postId} non trovato`,
+        });
+    }
 
     // Aggiorno i dati
     postToUpdate.title = req.body.title;
@@ -63,8 +77,14 @@ function destroy(req, res) {
     const index = postsData.findIndex(
         (post) => post.id === parseInt(req.params.id),
     );
-    postsData.splice(index, 1);
 
+    if (postIndex === -1) {
+        return res.status(404).json({
+            success: false,
+            message: `Impossibile eliminare: Post con id ${postId} non trovato`,
+        });
+    }
+    postsData.splice(index, 1);
     console.log("Lista aggiornata dopo l'eliminazione:", postsData);
 
     res.sendStatus(204);
