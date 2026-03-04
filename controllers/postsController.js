@@ -31,11 +31,17 @@ function show(req, res) {
 }
 
 function create(req, res) {
+    const validationResult = validatePostBody(req.body);
+    if (!validationResult.success) {
+        return res.status(400).json(validationResult);
+    }
+
     let maxId = 0;
     postsData.forEach((post) => {
         if (post.id > maxId) maxId = post.id;
     });
     const newId = maxId + 1;
+
     // Costruisco il nuovo oggetto post
     const newPost = {
         id: newId,
@@ -52,6 +58,11 @@ function create(req, res) {
 }
 
 function update(req, res) {
+    const validationResult = validatePostBody(req.body);
+    if (!validationResult.success) {
+        return res.status(400).json(validationResult);
+    }
+
     const postToUpdate = postsData.find(
         (post) => id === parseInt(req.params.id),
     );
@@ -89,6 +100,49 @@ function destroy(req, res) {
 
     res.sendStatus(204);
 }
+
+const validatePostBody = (body) => {
+    if (!body) {
+        return {
+            message: `Payload non leggibile`,
+            success: false,
+        };
+    }
+
+    const { title, content, image, tags } = body;
+    let posts = [...postsData];
+
+    if (!title || typeof title !== "string") {
+        return {
+            success: false,
+            message: "Il 'title' è obbligatorio e deve essere una stringa",
+        };
+    }
+
+    if (!content || typeof content !== "string") {
+        return {
+            success: false,
+            message: "Il 'content' è obbligatorio e deve essere una stringa",
+        };
+    }
+
+    if (!image || typeof image !== "string") {
+        return {
+            success: false,
+            message:
+                "L' 'image' è obbligatoria e il percorso deve essere una stringa",
+        };
+    }
+
+    if (!tags || !Array.isArray(tags)) {
+        return {
+            success: false,
+            message: "I 'tags' sono obbligatori e devono essere in un array",
+        };
+    }
+
+    return { success: true, message: "Tutti i parametri sono validi" };
+};
 
 module.exports = {
     index,
