@@ -27,7 +27,26 @@ function show(req, res) {
             });
         }
 
-        res.json(results[0]);
+        const post = results[0];
+
+        const sqlTags = `
+        SELECT tags.id, tags.label
+        FROM tags
+        JOIN post_tag ON tags.id = post_tag.tag_id
+        WHERE post_tag.post_id = ?
+        `;
+
+        connection.query(sqlTags, [id], (err, tagsResults) => {
+            if (err) {
+                return res
+                    .status(500)
+                    .json({ error: `Errore nel recupero dei tag` });
+            }
+
+            post.tags = tagsResults;
+
+            res.json(post);
+        });
     });
 }
 
