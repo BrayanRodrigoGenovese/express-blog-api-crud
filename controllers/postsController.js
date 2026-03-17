@@ -1,4 +1,5 @@
 const postsData = require("../data/posts.js");
+const connection = require("../db/connection.js");
 
 function index(req, res) {
     let posts = [...postsData];
