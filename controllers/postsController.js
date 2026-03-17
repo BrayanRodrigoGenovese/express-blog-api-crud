@@ -12,18 +12,23 @@ function index(req, res) {
 }
 
 function show(req, res) {
-    const postFound = postsData.find(
-        (post) => post.id === parseInt(req.params.id),
-    );
+    const id = req.params.id;
+    const sql = `SELECT * FROM posts WHERE id = ?`;
 
-    if (!postFound) {
-        return res.status(404)({
-            succes: false,
-            message: `Post con id ${postID} non trovato`,
-        });
-    }
+    connection.query(sql, [id], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: "Errore del database" });
+        }
 
-    res.json(postFound);
+        if (results.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: `Post con id ${id} non trovato`,
+            });
+        }
+
+        res.json(results[0]);
+    });
 }
 
 function create(req, res) {
