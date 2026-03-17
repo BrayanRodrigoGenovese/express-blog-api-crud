@@ -81,20 +81,23 @@ function update(req, res) {
 }
 
 function destroy(req, res) {
-    const index = postsData.findIndex(
-        (post) => post.id === parseInt(req.params.id),
-    );
+    const id = req.params.id;
+    const sql = `DELETE FROM posts WHERE id = ?`;
 
-    if (postIndex === -1) {
-        return res.status(404).json({
-            success: false,
-            message: `Impossibile eliminare: Post con id ${postId} non trovato`,
-        });
-    }
-    postsData.splice(index, 1);
-    console.log("Lista aggiornata dopo l'eliminazione:", postsData);
+    connection.query(sql, [id], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: "Errore del database" });
+        }
 
-    res.sendStatus(204);
+        if (results.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: `Impossibile eliminare: Post con id ${postId} non trovato`,
+            });
+        }
+
+        res.sendStatus(204);
+    });
 }
 
 const validatePostBody = (body) => {
