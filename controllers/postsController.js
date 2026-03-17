@@ -1,19 +1,14 @@
-const postsData = require("../data/posts.js");
 const connection = require("../db/connection.js");
 
 function index(req, res) {
-    let posts = [...postsData];
-    const tagFilter = req.query.tag;
-    if (tagFilter) {
-        const normalizedFilter = tagFilter.toLowerCase().trim();
-        posts = posts.filter((post) => {
-            return post.tags.some(
-                (tag) => tag.toLowerCase().trim() === normalizedFilter,
-            );
-        });
-    }
+    const sql = "SELECT * FROM posts";
 
-    res.json(posts);
+    connection.query(sql, (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: "Errore del database" });
+        }
+        res.json(results);
+    });
 }
 
 function show(req, res) {
